@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>S.H.A.P.E. Discovery Workbook - Interactive Assessment</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-color: #dee2e6;
+            --success-color: #27ae60;
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            border-radius: 0 0 8px 8px;
+        }
+
+        .nav-indicator {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px;
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            border-bottom: 2px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .nav-btn {
+            padding: 8px 16px;
+            border: none;
+            background: #eee;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn.active {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        section {
+            display: none;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            min-width: 0;
+        }
+
+        section.active { display: block; }
+
+        h1, h2, h3 { color: var(--primary-color); }
+        blockquote {
+            border-left: 5px solid var(--accent-color);
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f0f7fd;
+            font-style: italic;
+        }
+
+        .gift-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .radio-group {
+            display: flex;
+            justify-content: space-between;
+            max-width: 400px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+
+        .radio-option input {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 5px;
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+            gap: 10px;
+            margin: 1rem 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        textarea, input[type="text"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .personality-pair {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            min-width: 44px;
+            min-height: 44px;
+        }
+
+        .btn-primary { background: var(--accent-color); color: white; }
+        .btn-save { background: var(--success-color); color: white; }
+        .btn-clear { background: #e74c3c; color: white; }
+
+        .status-bar {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .analysis-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .analysis-table th, .analysis-table td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        @media (min-width: 768px) {
+            .personality-pair { flex-direction: row; align-items: center; }
+            .personality-pair > div { flex: 1; }
+            .radio-group { max-width: 500px; }
+        }
+
+        @media print {
+            .nav-indicator, .controls, .status-bar { display: none; }
+            section { display: block; border: none; box-shadow: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>S.H.A.P.E. Discovery</h1>
+    <p>Discovering My S.H.A.P.E. for Ministry</p>
+</header>
+
+<div class="nav-indicator" id="sectionNav">
+    <button class="nav-btn active" data-target="intro">Introduction</button>
+    <button class="nav-btn" data-target="gifts">Spiritual Gifts</button>
+    <button class="nav-btn" data-target="heart">Heart</button>
+    <button class="nav-btn" data-target="abilities">Abilities</button>
+    <button class="nav-btn" data-target="personality">Personality</button>
+    <button class="nav-btn" data-target="experiences">Experiences</button>
+    <button class="nav-btn" data-target="profile">Profile</button>
+    <button class="nav-btn" data-target="summary">Summary</button>
+</div>
+
+<div class="container">
+    <form id="shapeForm">
+        <!-- Introduction -->
+        <section id="intro" class="active">
+            <h2>Welcome to Your Discovery</h2>
+            <blockquote>
+                “Each one should use whatever gift he has received to serve others, faithfully administering God's grace in its various forms.” 1 Peter 4:10
+            </blockquote>
+            <p>Your S.H.A.P.E. (Spiritual Gifts, Heart, Abilities, Personality, and Experience) determines your ministry. This workbook is designed to help you discover how God has specifically designed you to serve Him.</p>
+            <h3>Three Key Principles:</h3>
+            <ol>
+                <li>I was shaped for a <strong>Purpose</strong>.</li>
+                <li>I am <strong>Unique</strong>.</li>
+                <li>I am <strong>Wonderfully Made</strong>.</li>
+            </ol>
+            <p>God has been molding and shaping you for ministry since you were born! (Job 10:8, Psalm 139:13-16)</p>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('gifts')">Start Assessment</button>
+            </div>
+        </section>
+
+        <!-- Spiritual Gifts -->
+        <section id="gifts">
+            <h2>Spiritual Gifts Assessment</h2>
+            <p>Answer according to what is presently true for you. Scale: 4=Always, 3=Most of the time, 2=Sometimes, 1=Seldom, 0=Never.</p>
+            <div id="giftsContainer"></div>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('heart')">Next: Heart</button>
+            </div>
+        </section>
+
+        <!-- Heart -->
+        <section id="heart">
+            <h2>Heart: What Do I Love to Do?</h2>
+            <blockquote>"Delight yourself in the Lord and he will give you the desires of your heart" Ps. 37:4</blockquote>
+            <h3>1. My Passion for a Role (I love to...):</h3>
+            <div class="checkbox-grid" id="heartRoles"></div>
+            <h3>2. My Passion for People (I love to work with...):</h3>
+            <div class="checkbox-grid" id="heartPeople"></div>
+            <h3>3. My Passion for a Cause (I am excited about...):</h3>
+            <div class="checkbox-grid" id="heartCauses"></div>
+            <h3>4. The Dream:</h3>
+            <p>If I knew I couldn't fail, this is what I would attempt to do for God with my life:</p>
+            <textarea name="heart_dream" rows="4"></textarea>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('abilities')">Next: Abilities</button>
+            </div>
+        </section>
+
+        <!-- Abilities -->
+        <section id="abilities">
+            <h2>Abilities: What Natural Talents Do I Have?</h2>
+            <p>Circle the abilities that best describe you. You have dozens of unused abilities lying dormant!</p>
+            <div class="checkbox-grid" id="abilitiesList"></div>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('personality')">Next: Personality</button>
+            </div>
+        </section>
+
+        <!-- Personality -->
+        <section id="personality">
+            <h2>Personality: Where Do I Best Fit?</h2>
+            <p>God loves variety! Select one tendency for each couplet.</p>
+            <div class="personality-pair">
+                <div><strong>Extroverted:</strong> I prefer interacting with many people and gain energy from variety.</div>
+                <input type="radio" name="p1" value="Extroverted" required>
+                <span>OR</span>
+                <input type="radio" name="p1" value="Introverted">
+                <div><strong>Introverted:</strong> I prefer quiet reflective time and few people. I am a good listener.</div>
+            </div>
+            <div class="personality-pair">
+                <div><strong>Self-expressive:</strong> I am open and verbal about thoughts/opinions.</div>
+                <input type="radio" name="p2" value="Self-expressive" required>
+                <span>OR</span>
+                <input type="radio" name="p2" value="Self-controlled">
+                <div><strong>Self-controlled:</strong> I tend to keep my thoughts and opinions to myself.</div>
+            </div>
+            <div class="personality-pair">
+                <div><strong>Routine:</strong> I like clear expectations and closure before starting new.</div>
+                <input type="radio" name="p3" value="Routine" required>
+                <span>OR</span>
+                <input type="radio" name="p3" value="Variety">
+                <div><strong>Variety:</strong> I am fulfilled by change and surprises. Closure is not crucial.</div>
+            </div>
+            <div class="personality-pair">
+                <div><strong>Cooperative:</strong> I easily see others' points of view. Team effort.</div>
+                <input type="radio" name="p4" value="Cooperative" required>
+                <span>OR</span>
+                <input type="radio" name="p4" value="Competitive">
+                <div><strong>Competitive:</strong> I like a sense of challenge. It helps me overcome obstacles.</div>
+            </div>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('experiences')">Next: Experiences</button>
+            </div>
+        </section>
+
+        <!-- Experiences -->
+        <section id="experiences">
+            <h2>Experiences: What Have I Had?</h2>
+            <p>God never wastes a hurt! Select the areas that apply to your life.</p>
+            <h3>Spiritual Experiences</h3>
+            <div class="checkbox-grid" id="expSpiritual"></div>
+            <h3>Painful Experiences</h3>
+            <div class="checkbox-grid" id="expPainful"></div>
+            <h3>Work/Educational/Ministry</h3>
+            <textarea name="exp_narrative" placeholder="Describe your vocational and ministry background..." rows="4"></textarea>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="nextSection('profile')">Next: Personal Profile</button>
+            </div>
+        </section>
+
+        <!-- Personal Profile -->
+        <section id="profile">
+            <h2>Participant Identity</h2>
+            <div class="checkbox-grid">
+                <div>Name: <input type="text" name="user_name" required></div>
+                <div>Date: <input type="text" name="current_date" id="currentDate"></div>
+                <div>Age: <input type="text" name="user_age"></div>
+                <div>Email: <input type="text" name="user_email"></div>
+            </div>
+            <h3>Availability for Service</h3>
+            <div class="checkbox-grid">
+                <div>Hours/Week: 
+                    <select name="avail_hours">
+                        <option>1-2 Hours</option>
+                        <option>3-5 Hours</option>
+                        <option>6+ Hours</option>
+                    </select>
+                </div>
+                <div>Best Time:
+                    <select name="avail_time">
+                        <option>Weekday</option>
+                        <option>Weeknight</option>
+                        <option>Weekend</option>
+                        <option>Any</option>
+                    </select>
+                </div>
+            </div>
+            <div class="controls">
+                <button type="button" class="btn-primary" onclick="calculateResults()">Review & Submit</button>
+            </div>
+        </section>
+
+        <!-- Analysis Summary -->
+        <section id="summary">
+            <h2>S.H.A.P.E. Analysis Summary</h2>
+            <div id="analysisContent"></div>
+            <div class="controls">
+                <button type="button" class="btn-save" onclick="window.print()">Print Results</button>
+                <button type="button" class="btn-clear" onclick="clearData()">Clear All Data</button>
+            </div>
+        </section>
+    </form>
+
+    <div class="status-bar" id="statusBar">Last saved: Never</div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'shape-discovery-workbook-v1';
+    
+    const GIFT_LABELS = {
+        'A': 'Administration', 'B': 'Apostle', 'C': 'Craftsmanship', 'D': 'Creative Communication',
+        'E': 'Discernment', 'F': 'Encouragement', 'G': 'Evangelism', 'H': 'Faith',
+        'I': 'Giving', 'J': 'Hospitality', 'K': 'Intercession', 'L': 'Knowledge',
+        'M': 'Leadership', 'N': 'Mercy', 'O': 'Missions', 'P': 'Prophecy',
+        'Q': 'Service', 'R': 'Shepherding', 'S': 'Teaching', 'T': 'Wisdom'
+    };
+
+    const GIFT_STATEMENTS = [
+        "I thrive when I am organizing the details of an event or a project.",
+        "I feel called to start and oversee a global or regional ministry.",
+        "I like to design and build things with my hands to help others.",
+        "I love to communicate the truth of God’s word through musical or artistic expression.",
+        "When I first meet someone I can accurately discern the quality of their character.",
+        "I prefer helping someone who is having personal problems rather than sending them to someone else.",
+        "I am energized when I go into non-Christian environments so I can share the gospel message.",
+        "I am able to trust God in difficult circumstances even when all odds are against me.",
+        "I experience great fulfillment in meeting the financial needs of people, the church and my community.",
+        "I tend to notice the strangers or the lonely in a group and do whatever it takes to make them feel safe.",
+        "Whenever I hear about someone in need, my first response is to pray for him or her.",
+        "It is very important to me that my opinions are backed up with facts and careful research.",
+        "I love to share my vision for the future and others want to join my team.",
+        "I like to provide compassionate and cheerful support to those experiencing distress, crisis or pain.",
+        "I can adapt to different cultures easily and enjoy building relationships with foreign people.",
+        "God regularly uses me to speak timely words that bring conviction or direction to people.",
+        "Others depend on me to serve whenever there is a practical task or routine job that needs to be done.",
+        "I really like to help protect wayward believers from influences that would undermine their faith.",
+        "When I hear a teaching or a sermon, I pay close attention to its accuracy.",
+        "When a group is faced with a problem, the decisions I think we should make turn out to be right.",
+        "I organize my time and projects carefully and efficiently.",
+        "I want to start churches or ministry organizations that do not currently exist.",
+        "I am skilled at making arts and crafts and designing things with my hands.",
+        "I enjoy developing and using my creative arts skills (photography, writing, drama).",
+        "I can accurately identify deception in people.",
+        "I like to motivate and inspire others to achieve their highest potential.",
+        "I enjoy helping believers discover practical ways they can share their faith with unbelievers.",
+        "I regularly accept God’s word at face value and apply His promises to my situation.",
+        "I have a special desire to steward and distribute money wisely and generously.",
+        "In group settings, I go out of my way to help newcomers feel welcomed and comfortable.",
+        "I regularly pray for long periods of time in response to the Holy Spirit’s leadings.",
+        "It is essential that I collect and organize all of the pertinent information before I make a decision.",
+        "I am naturally intuitive in how to motivate and lead others to accomplish God’s purposes.",
+        "I have great compassion for those who are suffering or in pain.",
+        "I am very sensitive to what God is doing in other parts of the world.",
+        "I am active in communicating my theological and ethical positions to challenge people.",
+        "I like to do the “little things” behind the scenes so that others can minister more effectively.",
+        "When I see a believer who is wandering from the truth, I am compelled to help them.",
+        "When others don’t understand a scripture, they trust I will be able to explain it to them.",
+        "I can frequently bring resolve and practical solutions to problems and conflicts.",
+        "I can effectively schedule the many details of a large project and complete it on time.",
+        "I would enjoy planting new churches and/or organizations.",
+        "I enjoy building and crafting things so that they can be used in ministry.",
+        "I enjoy challenging an audience to understand God’s truth through artistic expression.",
+        "Even when others don’t agree, the evaluations I have of people are usually correct.",
+        "I thrive on bringing out the best in others and helping them succeed.",
+        "I am especially sensitive to the roadblocks to faith of unbelievers.",
+        "I frequently challenge others to simply trust God when a problem arises.",
+        "I intentionally maintain a lower standard of living so that I can sacrificially give.",
+        "I see my home primarily as a place where I can minister to people in need.",
+        "I enjoy asking people for prayer requests and am faithful to pray for them.",
+        "I am able to clearly distinguish between a teaching of scripture and an unbiblical teaching.",
+        "In a group setting, people regularly look to me to decide what to do.",
+        "I am strongly moved to alleviate the pain when I see someone who is hurting.",
+        "I get excited when I think about moving to another country for the gospel.",
+        "When I anticipate a conflict brewing, I quickly move to confront the appropriate person.",
+        "When I walk in a room and notice several odd jobs, I feel compelled to help.",
+        "I like to assume responsibility for the nurture and spiritual formation of a small group.",
+        "I love to effectively share fresh insight into scripture in a way that brings life change.",
+        "Others tend to say often that I have great insight into how to solve problems.",
+        "I enjoy planning, detailing and organizing the goals and objectives for my life.",
+        "I believe God wants to use me to pioneer and network together new ministries.",
+        "I take great pleasure in creating things with wood, paint, paper, fabric, or metal.",
+        "I like using new and fresh artistic methods to communicate scripture.",
+        "I am compelled to find out if a teaching is in accordance with God’s word.",
+        "I like to counsel people and help them grow in their walk with God.",
+        "When an unbeliever is in my group, I actively pursue ways to understand them.",
+        "I regularly take calculated and appropriate risks because I trust God.",
+        "I am very generous with my resources when I see someone in need.",
+        "I enjoy providing a friendly environment where people can connect.",
+        "I regularly see specific results in response to my prayers.",
+        "I enjoy researching and finding the facts to help me form an opinion.",
+        "I am driven to strongly influence others to succeed in their endeavors.",
+        "I am sensitive to the hurt, loneliness and suffering of others.",
+        "I have a strong burden to minister to a specific people group in the world.",
+        "I tend to view behavior as right or wrong and am compelled to expose sin.",
+        "I consistently make myself available to support the work of others.",
+        "I love to disciple and oversee the spiritual growth of believers.",
+        "I enjoy spending large blocks of time intensely studying the Bible.",
+        "When others are faced with a decision, they regularly seek my advice."
+    ];
+
+    const ROLES = ["Design/Develop", "Pioneer", "Organize", "Operate/Maintain", "Serve/Help", "Acquire/Possess", "Excel", "Influence", "Perform", "Improve", "Repair", "Lead/Be in Charge", "Persevere", "Follow Rules", "Prevail"];
+    const PEOPLE = ["Infants", "Toddlers", "Preschool", "Elementary", "Jr. High", "High School", "College", "Young Marrieds", "Women", "Men", "Singles", "Families", "Couples", "Older Adults"];
+    const CAUSES = ["Parenting", "Marriage", "At-Risk Children", "Abuse/Violence", "Financial Mgmt", "Disabilities", "Homelessness", "Recovery", "Education", "Evangelism", "Worship", "Relief Efforts", "Environment"];
+    const ABILITIES = ["Entertaining", "Recruiting", "Interviewing", "Researching", "Artistic", "Graphics", "Evaluating", "Planning", "Managing", "Counseling", "Athletic", "Teaching", "Writing", "Linguistic", "Editing", "Promoting", "Repairing", "Cooking", "Recall", "Mechanical", "Technical", "Resourceful", "Musical", "Landscaping"];
+    const EXP_SPIRITUAL = ["Baptized", "Outreach", "Led Someone to Christ", "Small Group", "Regular Prayer", "Bible Reading", "Ministry Service"];
+    const EXP_PAINFUL = ["Abuse", "Divorce", "Death/Grief", "Depression", "Job Loss", "Illness", "Recovery"];
+
+    // Initialization
+    window.onload = () => {
+        renderGifts();
+        renderCheckboxes('heartRoles', ROLES, 'role');
+        renderCheckboxes('heartPeople', PEOPLE, 'people');
+        renderCheckboxes('heartCauses', CAUSES, 'cause');
+        renderCheckboxes('abilitiesList', ABILITIES, 'ability');
+        renderCheckboxes('expSpiritual', EXP_SPIRITUAL, 'exp_s');
+        renderCheckboxes('expPainful', EXP_PAINFUL, 'exp_p');
+        
+        document.getElementById('currentDate').value = new Date().toLocaleDateString();
+        loadProgress();
+
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.onclick = () => nextSection(btn.dataset.target);
+        });
+
+        document.getElementById('shapeForm').onchange = autosave;
+    };
+
+    function renderGifts() {
+        const container = document.getElementById('giftsContainer');
+        GIFT_STATEMENTS.forEach((s, i) => {
+            const div = document.createElement('div');
+            div.className = 'gift-item';
+            div.innerHTML = `
+                <p><strong>${i+1}.</strong> ${s}</p>
+                <div class="radio-group">
+                    ${[0,1,2,3,4].map(v => `
+                        <label class="radio-option">
+                            <input type="radio" name="g${i+1}" value="${v}" required>
+                            <span>${v}</span>
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    }
+
+    function renderCheckboxes(containerId, list, prefix) {
+        const container = document.getElementById(containerId);
+        list.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'checkbox-item';
+            div.innerHTML = `<input type="checkbox" name="${prefix}_${item.toLowerCase().replace(/\s/g, '_')}"> <span>${item}</span>`;
+            container.appendChild(div);
+        });
+    }
+
+    function nextSection(id) {
+        document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelector(`[data-target="${id}"]`).classList.add('active');
+        window.scrollTo(0,0);
+    }
+
+    function autosave() {
+        const formData = new FormData(document.getElementById('shapeForm'));
+        const data = {};
+        formData.forEach((value, key) => {
+            if (data[key]) {
+                if (!Array.isArray(data[key])) data[key] = [data[key]];
+                data[key].push(value);
+            } else {
+                data[key] = value;
+            }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+            timestamp: new Date().toLocaleString(),
+            data: data
+        }));
+        document.getElementById('statusBar').innerText = `Last saved: ${new Date().toLocaleTimeString()}`;
+    }
+
+    function loadProgress() {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        const { timestamp, data } = JSON.parse(saved);
+        const form = document.getElementById('shapeForm');
+        
+        for (const [key, value] of Object.entries(data)) {
+            const field = form.elements[key];
+            if (!field) continue;
+            if (field.type === 'radio') {
+                const radio = Array.from(form.elements[key]).find(r => r.value === value);
+                if (radio) radio.checked = true;
+            } else if (field.type === 'checkbox') {
+                field.checked = true;
+            } else {
+                field.value = value;
+            }
+        }
+        document.getElementById('statusBar').innerText = `Restored progress from: ${timestamp}`;
+    }
+
+    function calculateResults() {
+        const form = document.getElementById('shapeForm');
+        if (!form.checkValidity()) {
+            form.reportValidity();
+            return;
+        }
+
+        const scores = {};
+        // Mapping A-T: 1, 21, 41, 61 ...
+        for (let i = 1; i <= 20; i++) {
+            const letter = String.fromCharCode(64 + i);
+            const val1 = parseInt(form.elements[`g${i}`]?.value || 0);
+            const val2 = parseInt(form.elements[`g${i+20}`]?.value || 0);
+            const val3 = parseInt(form.elements[`g${i+40}`]?.value || 0);
+            const val4 = parseInt(form.elements[`g${i+60}`]?.value || 0);
+            scores[letter] = val1 + val2 + val3 + val4;
+        }
+
+        const ranked = Object.entries(scores)
+            .map(([k, v]) => ({ letter: k, name: GIFT_LABELS[k], score: v }))
+            .sort((a, b) => b.score - a.score);
+
+        const top3 = ranked.slice(0, 3);
+        const top5 = ranked.slice(0, 5);
+
+        let html = `
+            <h3>Participant: ${form.elements['user_name'].value}</h3>
+            <p><strong>Spiritual Gifts Ranking:</strong></p>
+            <div style="overflow-x: auto">
+            <table class="analysis-table">
+                <tr><th>Gift</th><th>Score (0-16)</th></tr>
+                ${ranked.map(r => `<tr><td>${r.name}</td><td>${r.score}</td></tr>`).join('')}
+            </table>
+            </div>
+
+            <h4>Top 3 Confirmed Gifts:</h4>
+            <ul>${top3.map(g => `<li><strong>${g.name}</strong> (${g.score}/16)</li>`).join('')}</ul>
+
+            <h4>Heart, Abilities, & Personality:</h4>
+            <p><strong>Dream:</strong> ${form.elements['heart_dream'].value || 'None provided'}</p>
+            <p><strong>Personality:</strong> ${form.elements['p1'].value}, ${form.elements['p2'].value}, ${form.elements['p3'].value}, ${form.elements['p4'].value}</p>
+            
+            <blockquote>
+                Note: This discovery tool is a ministry-discernment aid, not a definitive judgment or diagnosis. 
+                Next steps: Discuss these results with a ministry leader and try a service opportunity matching your top gifts.
+            </blockquote>
+        `;
+
+        document.getElementById('analysisContent').innerHTML = html;
+        nextSection('summary');
+    }
+
+    function clearData() {
+        if (confirm("Clear all assessment data?")) {
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
+    }
+</script>
+
+</body>
+</html>
